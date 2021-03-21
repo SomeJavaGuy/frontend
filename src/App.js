@@ -18,10 +18,14 @@ import ConnectWallet from "./components/ConnectWallet";
 const erc20ABI = require("./abis/ERC20.json");
 const erc1155ABI = require("./abis/ERC1155.json");
 const exchangeABI = require("./abis/Exchange.json");
-// Address (Matic Testnet)
-const stableAddress = "0x3dEb26547a55F9ef8885e34d79Dd9c425b87D4e6";
-const nftAddress = "0x027125316C87e5fdA12881248fD00fb81a770DB5";
-const exchangeAddress = "0xa2DB9cd5aB3E891cE129B631F5863155e5762fDd";
+//// Address (Matic Testnet)
+const stableAddress = "0x8BDDa8C820933F5FBfbEeEb3EB8298072C405c7d";
+const nftAddress = "0x4cA8837B5782FBeE238F9eeafCf998D7c23DCbeF";
+const exchangeAddress = "0xA7B06978856182668E29fb91AF30C0B1226E7E01";
+//// Address (Goerli Testnet)
+// const stableAddress = "0xADa2f8e8C22698CAF5c95B5Bc68F2dA23D0FdA32";
+// const nftAddress = "0xC07d642d8E4ee96E14a68a339FEd9F16451FA557";
+// const exchangeAddress = "0x1D0242a926c930EEAb7876c13a6326a3fE6b04F4";
 const nftID = 10;
 // BN
 const { BN, toWei } = require("web3-utils");
@@ -175,7 +179,14 @@ function App() {
     setLoading(false)
   };
 
-  const swap = () => {};
+  const swap = async () => {
+    setLoading(true)
+    await exchangeContract.methods.nftToStable(nftAmtToSwap).send({from: account})
+    setLoading(false)
+
+    await fetchUserBalances()
+    await fetchPoolBalances()
+  };
 
   return (
     <Grid container direction="column">
@@ -340,7 +351,7 @@ function App() {
             >
               {nftAmtToSwap > 0 && usdcBought && (
                 <Typography variant="button" display="block" gutterBottom>
-                  {nftAmtToSwap} Sword{nftAmtToSwap > 1 ? "s" : ""} --> {usdcBought} USDC
+                  {nftAmtToSwap} Sword{nftAmtToSwap > 1 ? "s" : ""} {"-->"} {usdcBought} USDC
                 </Typography>
               )}
             </Grid>
